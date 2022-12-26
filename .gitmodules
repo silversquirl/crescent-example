@@ -1,0 +1,9 @@
+[submodule "mach-gpu"]
+	path = mach-gpu
+	url = https://github.com/silversquirl/mach-gpu-crescent
+[submodule "mach-glfw"]
+	path = mach-glfw
+	url = https://github.com/hexops/mach-glfw
+[submodule "crescent"]
+	path = crescent
+	url = https://github.com/silversquirl/crescent
