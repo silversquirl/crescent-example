@@ -12,17 +12,24 @@ pub fn main() !void {
 
     gpu.Impl.init();
     const setup = try sample_utils.setup(allocator);
+    defer {
+        setup.surface.release();
+        setup.device.release();
+        setup.adapter.release();
+        setup.instance.release();
+        setup.window.destroy();
+    }
     const framebuffer_size = try setup.window.getFramebufferSize();
 
-    const window_data = try allocator.create(WindowData);
-    window_data.* = .{
+    var window_data: WindowData = .{
         .surface = setup.surface,
         .swap_chain = null,
         .swap_chain_format = undefined,
         .current_desc = undefined,
         .target_desc = undefined,
     };
-    setup.window.setUserPointer(window_data);
+    setup.window.setUserPointer(&window_data);
+    defer if (window_data.swap_chain) |chain| chain.release();
 
     window_data.swap_chain_format = .bgra8_unorm;
     const descriptor = gpu.SwapChain.Descriptor{
@@ -31,7 +38,7 @@ pub fn main() !void {
         .format = window_data.swap_chain_format,
         .width = framebuffer_size.width,
         .height = framebuffer_size.height,
-        .present_mode = .immediate,
+        .present_mode = .mailbox,
     };
 
     window_data.current_desc = descriptor;
